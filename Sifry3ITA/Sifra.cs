@@ -29,7 +29,26 @@ namespace Sifry3ITA
 
         public override string Rozsifruj(string text)
         {
-            throw new NotImplementedException();
+            string rozsifrovany = "";
+            for(int i = 0; i < text.Length; i++)
+            {
+                int index = abeceda.IndexOf(text[i]);
+                if(index < 0)
+                {
+                    rozsifrovany += text[i];
+                    continue;
+                }
+
+                index -= klic;
+                if (index < 0)
+                    index += abeceda.Length;
+                rozsifrovany += abeceda[index];
+
+            }
+
+
+
+            return rozsifrovany;
         }
 
         public override string Zasifruj(string text)
@@ -39,6 +58,12 @@ namespace Sifry3ITA
             for(int i = 0; i < text.Length; i++)
             {
                 int index = abeceda.IndexOf(text[i]);
+                if(index == -1)
+                {
+                    sifrovany += text[i];
+                    continue;
+                }
+                    
                 index += klic;
                 index %= abeceda.Length;
                 sifrovany += abeceda[index];
@@ -50,21 +75,44 @@ namespace Sifry3ITA
 
     internal class SubstitucniSifra : Sifra
     {
-        private string klic;
+        private Dictionary<string, string> klic;
 
-        public SubstitucniSifra(string abeceda, string klic) : base(abeceda)
+        public SubstitucniSifra(string abeceda, Dictionary<string, string> klic) : base(abeceda)
         {
             this.klic = klic;
         }
 
         public override string Rozsifruj(string text)
         {
-            throw new NotImplementedException();
+            string rozsifrovany = "";
+            for (int i = 0; i < text.Length; i++)
+            {
+                if(klic.ContainsValue(text[i].ToString()))
+                {
+                    rozsifrovany += klic.FirstOrDefault(x => x.Value == text[i].ToString()).Key;
+                } else
+                {
+                    rozsifrovany += text[i].ToString();
+                }
+            }
+            return rozsifrovany;
         }
 
         public override string Zasifruj(string text)
         {
-            throw new NotImplementedException();
+            string zasifrovany = "";
+            for(int i = 0; i < text.Length; i++)
+            {
+                if(klic.ContainsKey(text[i].ToString()))
+                {
+                    zasifrovany += klic[text[i].ToString()];
+                } else
+                {
+                    zasifrovany += text[i].ToString();
+                }
+            }
+
+            return zasifrovany;
         }
     }
 }
